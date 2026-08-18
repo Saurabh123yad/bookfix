@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BMS - BookMyShow Movie Booking Portal</title>
+  <meta name="description" content="Experience hassle-free movie ticket bookings with real-time seat selection and instant digital passes.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Top Announcement Bar -->
+  <aside class="announcement-bar" aria-label="Announcement">
+    <div class="announcement-content">
+      <span class="pulse-dot"></span>
+      <span>Live Cinema Booking System &bull; Select seats in real-time &bull; Instant QR Passes</span>
+    </div>
+    <div class="backend-status-pill" id="backendStatusPill" title="Status of Spring Boot Backend (http://localhost:8080)">
+      <span class="status-indicator-dot" id="backendStatusDot"></span>
+      <span id="backendStatusText">Checking Backend...</span>
+    </div>
+  </aside>
+
+  <!-- Main Navigation Bar -->
+  <header class="site-header">
+    <div class="container header-container">
+      <a href="#" class="brand-logo" id="brandLogoBtn">
+        <div class="logo-icon">
+          <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+            <path d="M18 3v2h-2V3H8v2H6V3H4v18h2v-2h2v2h8v-2h2v2h2V3h-2zM8 17H6v-2h2v2zm0-4H6v-2h2v2zm0-4H6V7h2v2zm10 8h-2v-2h2v2zm0-4h-2v-2h2v2zm0-4h-2V7h2v2z"/>
+          </svg>
+        </div>
+        <div class="logo-text">
+          <span class="brand-name">Book<span class="highlight">MyShow</span></span>
+          <span class="brand-sub">CINEMAS BMS</span>
+        </div>
+      </a>
+
+      <!-- Search & Filters -->
+      <div class="header-search-wrapper">
+        <svg class="search-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input type="text" id="searchInput" placeholder="Search movies by title, genre, or language..." autocomplete="off">
+        <button id="clearSearchBtn" class="clear-search-btn" title="Clear search" style="display: none;">&times;</button>
+      </div>
+
+      <!-- City Selector & Header Actions -->
+      <div class="header-actions">
+        <div class="city-selector">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+            <circle cx="12" cy="10" r="3"></circle>
+          </svg>
+          <select id="citySelect" aria-label="Select Location">
+            <option value="Mumbai">Mumbai</option>
+            <option value="Delhi-NCR">Delhi-NCR</option>
+            <option value="Bengaluru" selected>Bengaluru</option>
+            <option value="Hyderabad">Hyderabad</option>
+            <option value="Pune">Pune</option>
+            <option value="Chennai">Chennai</option>
+          </select>
+        </div>
+
+        <button class="btn btn-outline" id="openBookingsBtn" title="View booking history">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+            <line x1="16" y1="2" x2="16" y2="6"></line>
+            <line x1="8" y1="2" x2="8" y2="6"></line>
+            <line x1="3" y1="10" x2="21" y2="10"></line>
+          </svg>
+          <span>My Tickets</span>
+        </button>
+
+        <button class="btn btn-primary" id="openAddMovieBtn">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          <span>Add Movie</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Genre & Filter Chips -->
+  <nav class="filters-bar" aria-label="Genre Filters">
+    <div class="container filters-container">
+      <div class="genre-chips" id="genreChips">
+        <button class="chip active" data-genre="ALL">All Movies</button>
+        <button class="chip" data-genre="Action">Action</button>
+        <button class="chip" data-genre="Sci-Fi">Sci-Fi</button>
+        <button class="chip" data-genre="Drama">Drama</button>
+        <button class="chip" data-genre="Thriller">Thriller</button>
+        <button class="chip" data-genre="Comedy">Comedy</button>
+        <button class="chip" data-genre="Romance">Romance</button>
+        <button class="chip" data-genre="Animation">Animation</button>
+      </div>
+
+      <div class="language-filter">
+        <label for="languageSelect">Language:</label>
+        <select id="languageSelect">
+          <option value="ALL">All Languages</option>
+          <option value="English">English</option>
+          <option value="Hindi">Hindi</option>
+          <option value="Telugu">Telugu</option>
+          <option value="Tamil">Tamil</option>
+          <option value="Kannada">Kannada</option>
+        </select>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content Area -->
+  <main class="main-content">
+
+    <!-- Hero Spotlight Section -->
+    <section class="hero-spotlight" id="heroSpotlight">
+      <div class="hero-backdrop" id="heroBackdrop"></div>
+      <div class="hero-overlay"></div>
+      <div class="container hero-container">
+        <div class="hero-badge">
+          <span class="badge-icon">&#9733;</span> FEATURED SPOTLIGHT
+        </div>
+        <h1 class="hero-title" id="heroTitle">Inception</h1>
+        <div class="hero-meta" id="heroMeta">
+          <span class="meta-tag rating">&#9733; 8.8/10</span>
+          <span class="meta-tag genre" id="heroGenre">Sci-Fi / Action</span>
+          <span class="meta-tag duration" id="heroDuration">148 Mins</span>
+          <span class="meta-tag language" id="heroLanguage">English</span>
+          <span class="meta-tag cert">UA 16+</span>
+        </div>
+        <p class="hero-desc" id="heroDesc">
+          A thief who steals corporate secrets through the use of dream-sharing technology is given the inverse task of planting an idea into the mind of a C.E.O.
+        </p>
+        <div class="hero-buttons">
+          <button class="btn btn-primary btn-lg" id="heroBookBtn">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+              <line x1="2" y1="10" x2="22" y2="10"></line>
+            </svg>
+            <span>Book Tickets</span>
+          </button>
+          <button class="btn btn-secondary btn-lg" id="heroDetailsBtn">
+            <span>View Info</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Movies Grid Section -->
+    <section class="movies-section container">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Now Showing</h2>
+          <p class="section-subtitle">Book tickets for the latest blockbusters and critically acclaimed releases</p>
+        </div>
+        <div class="section-controls">
+          <span class="movies-count-badge" id="moviesCountBadge">0 Movies</span>
+          <button class="btn btn-ghost" id="refreshMoviesBtn" title="Refresh movie list from database">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M23 4v6h-6"></path>
+              <path d="M1 20v-6h6"></path>
+              <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+            </svg>
+            <span>Reload</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Grid of Movie Cards -->
+      <div class="movies-grid" id="moviesGrid">
+        <!-- Dynamic Cards Injected via JS -->
+      </div>
+
+      <!-- Empty State -->
+      <div class="empty-state" id="emptyState" style="display: none;">
+        <div class="empty-icon">🎬</div>
+        <h3>No Movies Found</h3>
+        <p>No movies matched your search or the database is currently empty.</p>
+        <div class="empty-actions">
+          <button class="btn btn-primary" id="seedDataBtn">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            <span>Add Popular Movies to Database</span>
+          </button>
+          <button class="btn btn-outline" id="resetFiltersBtn">Reset Filters</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ==================== MODALS ==================== -->
+
+  <!-- 1. Interactive Seat Booking Modal -->
+  <dialog class="modal-dialog booking-dialog" id="bookingModal">
+    <div class="modal-container">
+      <div class="modal-header">
+        <div class="modal-header-info">
+          <h2 class="modal-title" id="bookingModalMovieTitle">Book Tickets</h2>
+          <div class="modal-subtitle" id="bookingModalMovieMeta">Select your preferred seats and showtime</div>
+        </div>
+        <button class="modal-close-btn" id="closeBookingModalBtn" aria-label="Close modal">&times;</button>
+      </div>
+
+      <div class="modal-body booking-modal-layout">
+        <!-- Left: Showtime & Cinema Seat Map -->
+        <div class="seatmap-section">
+          <!-- Showtime Selector -->
+          <div class="showtime-picker">
+            <span class="picker-label">Select Showtime:</span>
+            <div class="showtime-options" id="showtimeOptions">
+              <button class="time-btn active" data-time="10:30 AM" data-screen="Screen 1 (IMAX 4K)">
+                <span class="time-text">10:30 AM</span>
+                <span class="screen-type">IMAX 4K</span>
+              </button>
+              <button class="time-btn" data-time="01:45 PM" data-screen="Screen 2 (Dolby Atmos)">
+                <span class="time-text">01:45 PM</span>
+                <span class="screen-type">Dolby Atmos</span>
+              </button>
+              <button class="time-btn" data-time="05:30 PM" data-screen="Screen 1 (IMAX 4K)">
+                <span class="time-text">05:30 PM</span>
+                <span class="screen-type">IMAX 4K</span>
+              </button>
+              <button class="time-btn" data-time="09:15 PM" data-screen="Screen 3 (4DX)">
+                <span class="time-text">09:15 PM</span>
+                <span class="screen-type">4DX</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Screen Graphic -->
+          <div class="cinema-screen-container">
+            <div class="cinema-screen-curve"></div>
+            <div class="cinema-screen-label">ALL EYES THIS WAY • SCREEN</div>
+          </div>
+
+          <!-- Seat Grid Container -->
+          <div class="cinema-seating-plan">
+            <!-- VIP Recliner Tier -->
+            <div class="seat-tier-header">
+              <span class="tier-title">VIP RECLINER</span>
+              <span class="tier-price">&#8377;450</span>
+            </div>
+            <div class="seat-row" data-row="A" id="seatRowA"></div>
+
+            <!-- Prime Tier -->
+            <div class="seat-tier-header">
+              <span class="tier-title">PRIME SEATS</span>
+              <span class="tier-price">&#8377;250</span>
+            </div>
+            <div class="seat-row" data-row="B" id="seatRowB"></div>
+            <div class="seat-row" data-row="C" id="seatRowC"></div>
+            <div class="seat-row" data-row="D" id="seatRowD"></div>
+
+            <!-- Classic Tier -->
+            <div class="seat-tier-header">
+              <span class="tier-title">CLASSIC SEATS</span>
+              <span class="tier-price">&#8377;150</span>
+            </div>
+            <div class="seat-row" data-row="E" id="seatRowE"></div>
+            <div class="seat-row" data-row="F" id="seatRowF"></div>
+          </div>
+
+          <!-- Seat Legend -->
+          <div class="seat-legend">
+            <div class="legend-item"><span class="legend-box available"></span> Available</div>
+            <div class="legend-item"><span class="legend-box selected"></span> Selected</div>
+            <div class="legend-item"><span class="legend-box booked"></span> Booked</div>
+            <div class="legend-item"><span class="legend-box vip"></span> VIP Recliner</div>
+          </div>
+        </div>
+
+        <!-- Right: Order Summary & Checkout Details -->
+        <div class="booking-checkout-panel">
+          <h3 class="panel-heading">Order Summary</h3>
+
+          <div class="selected-movie-card">
+            <img src="" id="checkoutMoviePoster" alt="Movie Poster" class="checkout-poster">
+            <div class="checkout-movie-info">
+              <h4 id="checkoutMovieTitle">Movie Title</h4>
+              <p id="checkoutCinemaInfo">PVR BMS Cinemas, Bengaluru</p>
+              <span class="checkout-time-badge" id="checkoutTimeBadge">Today, 10:30 AM</span>
+            </div>
+          </div>
+
+          <div class="selected-seats-container">
+            <span class="summary-label">Selected Seats:</span>
+            <div class="seats-chip-list" id="selectedSeatsChips">
+              <span class="no-seats-msg">No seats selected yet</span>
+            </div>
+          </div>
+
+          <div class="price-breakdown">
+            <div class="price-row">
+              <span>Tickets Subtotal</span>
+              <span id="subtotalPrice">&#8377;0.00</span>
+            </div>
+            <div class="price-row">
+              <span>Convenience Fee + GST</span>
+              <span id="convenienceFee">&#8377;0.00</span>
+            </div>
+            <div class="price-row total">
+              <span>Total Amount</span>
+              <span id="grandTotalPrice">&#8377;0.00</span>
+            </div>
+          </div>
+
+          <!-- Customer Contact Form -->
+          <form class="checkout-form" id="checkoutForm" onsubmit="return false;">
+            <div class="form-group">
+              <label for="userNameInput">Full Name *</label>
+              <input type="text" id="userNameInput" placeholder="e.g. Saurabh Kumar" required value="Saurabh Kumar">
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="userEmailInput">Email ID *</label>
+                <input type="email" id="userEmailInput" placeholder="name@example.com" required value="saurabh@example.com">
+              </div>
+              <div class="form-group">
+                <label for="userPhoneInput">Phone *</label>
+                <input type="tel" id="userPhoneInput" placeholder="9876543210" required value="9876543210">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="paymentMethodSelect">Payment Method</label>
+              <select id="paymentMethodSelect">
+                <option value="UPI">UPI (GPay / PhonePe / Paytm)</option>
+                <option value="CREDIT_CARD">Credit / Debit Card</option>
+                <option value="NET_BANKING">Net Banking</option>
+              </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block btn-lg" id="confirmBookingBtn" disabled>
+              <span>Confirm & Pay &#8377;0.00</span>
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- 2. Digital Ticket Pass Modal -->
+  <dialog class="modal-dialog ticket-dialog" id="ticketModal">
+    <div class="modal-container">
+      <div class="modal-header">
+        <div class="modal-header-info">
+          <div class="success-badge-pill">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="3">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            <span>Booking Confirmed!</span>
+          </div>
+          <h2 class="modal-title">Your Digital Ticket Pass</h2>
+        </div>
+        <button class="modal-close-btn" id="closeTicketModalBtn">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="ticket-card" id="printableTicket">
+          <!-- Ticket Top -->
+          <div class="ticket-header">
+            <div class="ticket-brand">
+              <span class="brand-name">Book<span class="highlight">MyShow</span></span>
+              <span class="ticket-type">E-TICKET PASS</span>
+            </div>
+            <div class="ticket-code-badge" id="ticketNumberBadge">BMS-849204</div>
+          </div>
+
+          <!-- Ticket Main Details -->
+          <div class="ticket-body">
+            <div class="ticket-movie-details">
+              <h3 class="ticket-movie-title" id="ticketMovieTitle">Inception</h3>
+              <p class="ticket-genre-lang" id="ticketGenreLang">Sci-Fi &bull; English &bull; 148 Mins</p>
+              <div class="ticket-cinema-location" id="ticketCinemaName">PVR Cinemas BMS, Bengaluru</div>
+            </div>
+
+            <div class="ticket-meta-grid">
+              <div class="ticket-meta-item">
+                <span class="meta-label">DATE & TIME</span>
+                <span class="meta-val" id="ticketDateTime">Today, 10:30 AM</span>
+              </div>
+              <div class="ticket-meta-item">
+                <span class="meta-label">SCREEN</span>
+                <span class="meta-val" id="ticketScreenName">Screen 1 (IMAX)</span>
+              </div>
+              <div class="ticket-meta-item">
+                <span class="meta-label">SEATS</span>
+                <span class="meta-val highlight" id="ticketSeatsList">B4, B5</span>
+              </div>
+              <div class="ticket-meta-item">
+                <span class="meta-label">TOTAL PAID</span>
+                <span class="meta-val" id="ticketTotalAmount">&#8377;530.00</span>
+              </div>
+            </div>
+
+            <div class="ticket-customer-info">
+              <div><strong>Passenger/User:</strong> <span id="ticketUserName">Saurabh Kumar</span> (<span id="ticketUserPhone">9876543210</span>)</div>
+              <div><strong>Payment:</strong> <span id="ticketPaymentMethod">UPI (SUCCESS)</span></div>
+            </div>
+          </div>
+
+          <!-- Ticket Perforation Bar -->
+          <div class="ticket-perforation">
+            <div class="cutout-circle left"></div>
+            <div class="perforation-line"></div>
+            <div class="cutout-circle right"></div>
+          </div>
+
+          <!-- Ticket QR & Barcode Stub -->
+          <div class="ticket-footer">
+            <div class="ticket-barcode-wrapper">
+              <div class="mock-barcode"></div>
+              <span class="barcode-num" id="ticketBarcodeNumber">019284729103847</span>
+            </div>
+            <div class="mock-qr-code">
+              <svg viewBox="0 0 100 100" width="70" height="70">
+                <rect x="0" y="0" width="100" height="100" fill="#ffffff" />
+                <rect x="10" y="10" width="25" height="25" fill="#0b0f19" />
+                <rect x="15" y="15" width="15" height="15" fill="#ffffff" />
+                <rect x="18" y="18" width="9" height="9" fill="#0b0f19" />
+                <rect x="65" y="10" width="25" height="25" fill="#0b0f19" />
+                <rect x="70" y="15" width="15" height="15" fill="#ffffff" />
+                <rect x="73" y="18" width="9" height="9" fill="#0b0f19" />
+                <rect x="10" y="65" width="25" height="25" fill="#0b0f19" />
+                <rect x="15" y="70" width="15" height="15" fill="#ffffff" />
+                <rect x="18" y="73" width="9" height="9" fill="#0b0f19" />
+                <rect x="45" y="15" width="10" height="10" fill="#0b0f19" />
+                <rect x="45" y="45" width="15" height="15" fill="#0b0f19" />
+                <rect x="65" y="45" width="10" height="10" fill="#0b0f19" />
+                <rect x="45" y="75" width="20" height="15" fill="#0b0f19" />
+                <rect x="75" y="70" width="15" height="15" fill="#0b0f19" />
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <div class="ticket-action-buttons">
+          <button class="btn btn-secondary" id="printTicketBtn">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="6 9 6 2 18 2 18 9"></polyline>
+              <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+              <rect x="6" y="14" width="12" height="8"></rect>
+            </svg>
+            <span>Print Ticket</span>
+          </button>
+          <button class="btn btn-primary" id="doneTicketBtn">Done / Back to Movies</button>
+        </div>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- 3. Add New Movie Modal -->
+  <dialog class="modal-dialog form-dialog" id="addMovieModal">
+    <div class="modal-container">
+      <div class="modal-header">
+        <div class="modal-header-info">
+          <h2 class="modal-title">Add New Movie</h2>
+          <div class="modal-subtitle">Save a new movie entry directly to your Spring Boot & MySQL backend</div>
+        </div>
+        <button class="modal-close-btn" id="closeAddMovieModalBtn">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Quick Preset Buttons for Instant Testing -->
+        <div class="presets-section">
+          <span class="preset-label">⚡ Quick Fill Presets:</span>
+          <div class="preset-buttons">
+            <button type="button" class="preset-btn" data-preset="inception">Inception</button>
+            <button type="button" class="preset-btn" data-preset="interstellar">Interstellar</button>
+            <button type="button" class="preset-btn" data-preset="darkknight">The Dark Knight</button>
+            <button type="button" class="preset-btn" data-preset="avengers">Avengers</button>
+            <button type="button" class="preset-btn" data-preset="dune2">Dune: Part Two</button>
+            <button type="button" class="preset-btn" data-preset="pushpa2">Pushpa 2</button>
+          </div>
+        </div>
+
+        <form id="addMovieForm" class="standard-form">
+          <div class="form-group">
+            <label for="movieTitleInput">Movie Title *</label>
+            <input type="text" id="movieTitleInput" placeholder="e.g. Interstellar" required>
+          </div>
+
+          <div class="form-group">
+            <label for="movieDescInput">Description / Synopsis *</label>
+            <textarea id="movieDescInput" rows="3" placeholder="Enter a brief overview of the plot..." required></textarea>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="movieGenreInput">Genre *</label>
+              <select id="movieGenreInput" required>
+                <option value="Action">Action</option>
+                <option value="Sci-Fi" selected>Sci-Fi</option>
+                <option value="Drama">Drama</option>
+                <option value="Thriller">Thriller</option>
+                <option value="Comedy">Comedy</option>
+                <option value="Romance">Romance</option>
+                <option value="Animation">Animation</option>
+                <option value="Adventure">Adventure</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="movieLangInput">Language *</label>
+              <select id="movieLangInput" required>
+                <option value="English" selected>English</option>
+                <option value="Hindi">Hindi</option>
+                <option value="Telugu">Telugu</option>
+                <option value="Tamil">Tamil</option>
+                <option value="Kannada">Kannada</option>
+                <option value="Malayalam">Malayalam</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="movieDurationInput">Duration (Minutes) *</label>
+              <input type="number" id="movieDurationInput" min="30" max="360" value="150" required>
+            </div>
+            <div class="form-group">
+              <label for="movieReleaseInput">Release Date *</label>
+              <input type="date" id="movieReleaseInput" value="2024-03-01" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="moviePosterInput">Poster Image URL (HTTPS)</label>
+            <input type="url" id="moviePosterInput" placeholder="https://images.unsplash.com/..." value="https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=600&auto=format&fit=crop">
+          </div>
+
+          <div class="form-actions">
+            <button type="button" class="btn btn-secondary" id="cancelAddMovieBtn">Cancel</button>
+            <button type="submit" class="btn btn-primary" id="saveMovieBtn">
+              <span>Save Movie to Backend</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- 4. My Bookings / Ticket Lookup Modal -->
+  <dialog class="modal-dialog list-dialog" id="myBookingsModal">
+    <div class="modal-container">
+      <div class="modal-header">
+        <div class="modal-header-info">
+          <h2 class="modal-title">My Bookings & History</h2>
+          <div class="modal-subtitle">View and look up confirmed movie tickets</div>
+        </div>
+        <button class="modal-close-btn" id="closeMyBookingsModalBtn">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="booking-lookup-bar">
+          <input type="text" id="bookingSearchInput" placeholder="Search by Booking ID (e.g. 1)...">
+          <button class="btn btn-secondary" id="searchBookingIdBtn">Search</button>
+        </div>
+
+        <div class="bookings-history-list" id="bookingsHistoryList">
+          <!-- Dynamic booking cards -->
+        </div>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <footer class="site-footer">
+    <div class="container footer-container">
+      <div class="footer-left">
+        <span class="brand-name">Book<span class="highlight">MyShow</span></span>
+        <p>&copy; 2026 BMS Movie Booking System &bull; Powered by Spring Boot REST API &amp; Modern UI</p>
+      </div>
+      <div class="footer-right">
+        <span class="footer-link">Backend: <code>http://localhost:8080/api/movies</code></span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

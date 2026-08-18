@@ -1,0 +1,19 @@
+# ─── Backend (Spring Boot / Maven) ───────────────────────────────
+backend/target/
+backend/*.log
+backend/.mvn/wrapper/maven-wrapper.jar
+backend/.idea/
+
+# ─── Frontend (React / Vite / Node) ──────────────────────────────
+frontend/node_modules/
+frontend/dist/
+frontend/.env
+frontend/.env.local
+frontend/.env.*.local
+
+# ─── OS / Editor ─────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.vscode/
