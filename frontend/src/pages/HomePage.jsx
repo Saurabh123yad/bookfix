@@ -3,12 +3,12 @@ import { searchMovies, POPULAR_SEARCHES } from '../api/omdbApi';
 import MovieCard from '../components/MovieCard';
 
 const CATEGORIES = [
-  { label: 'Trending',    query: 'avengers' },
-  { label: 'Action',      query: 'action 2024' },
-  { label: 'Sci-Fi',      query: 'interstellar' },
-  { label: 'Thriller',    query: 'dark knight' },
-  { label: 'Comedy',      query: 'comedy 2023' },
-  { label: 'Animation',   query: 'pixar' },
+  { label: 'Now Trending', query: 'movie 2025' },
+  { label: 'Action',       query: 'action 2025' },
+  { label: 'Sci-Fi',       query: 'sci-fi 2024' },
+  { label: 'Thriller',     query: 'thriller 2024' },
+  { label: 'Comedy',       query: 'comedy 2024' },
+  { label: 'Animation',    query: 'animation 2024' },
 ];
 
 function useDebounce(value, delay) {
@@ -85,7 +85,7 @@ export default function HomePage() {
 
           <div className="hero-stats">
             <div className="hero-stat-card">
-              <div className="hero-stat-value">10K+</div>
+              <div className="hero-stat-value">1K+</div>
               <div className="hero-stat-label">Movies</div>
             </div>
             <div className="hero-stat-card">
@@ -104,11 +104,11 @@ export default function HomePage() {
               <span className="hero-eyebrow-text">Live Movie Database</span>
             </div>
             <h1 className="hero-title">
-              Find & book <span>any movie</span>,<br />any time
+              Discover &amp; book <span>the latest movies</span>,<br />any time
             </h1>
             <p className="hero-subtitle">
-              Powered by OMDB — search millions of movies, see ratings,
-              pick your seats and book instantly.
+              Powered by OMDB — explore the newest 2024–2025 releases, check
+              ratings, pick your seats and book instantly.
             </p>
             <div className="hero-actions">
               <button

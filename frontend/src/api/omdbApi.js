@@ -26,8 +26,8 @@ export async function getMovieByTitle(title) {
   return data;
 }
 
-// Curated popular searches shown on the home page
+// Curated popular searches shown on the home page (recent 2024-2025)
 export const POPULAR_SEARCHES = [
-  'avengers', 'batman', 'inception', 'interstellar',
-  'spider-man', 'iron man', 'dark knight', 'oppenheimer',
+  'dune 2024', 'deadpool wolverine', 'inside out 2', 'alien romulus',
+  'kingdom of the planet of the apes', 'twisters 2024', 'civil war 2024', 'furiosa',
 ];

@@ -11,8 +11,8 @@
 	<groupId>com.cfs</groupId>
 	<artifactId>bms</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>bms</name>
-	<description>Demo project for Spring Boot</description>
+	<name>bookfix</name>
+	<description>Bookfix Movie Booking System - Spring Boot</description>
 	<url/>
 	<licenses>
 		<license/>

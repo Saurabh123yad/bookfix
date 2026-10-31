@@ -10,7 +10,7 @@ export default function Navbar() {
         <Link to="/" className="navbar-logo">
           <div className="logo-mark">🎬</div>
           <div className="logo-text">
-            <span>Book</span>Flix
+            <span>Book</span>fix
           </div>
         </Link>
 
@@ -22,16 +22,14 @@ export default function Navbar() {
             Movies
           </Link>
           <Link
-            to="/"
-            className="nav-link"
-            style={{ opacity: 0.5, pointerEvents: 'none' }}
+            to="/cinemas"
+            className={`nav-link ${location.pathname === '/cinemas' ? 'active' : ''}`}
           >
             Cinemas
           </Link>
           <Link
-            to="/"
-            className="nav-link"
-            style={{ opacity: 0.5, pointerEvents: 'none' }}
+            to="/events"
+            className={`nav-link ${location.pathname === '/events' ? 'active' : ''}`}
           >
             Events
           </Link>
